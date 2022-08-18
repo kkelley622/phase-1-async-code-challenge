@@ -5,23 +5,29 @@ const queue = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     populateShows();
-    
-
 })
 
+// utility function in order to delete necessary li from ul
 
+function removeAllChildNodes(parent) {
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+    }
+}
 
-// list the shows under "shows"
+// empty array variables so I can mainpulate and change which data to display
 
 const showsList = document.getElementById("list")
 const queueList = document.getElementById("queued")
+
+// fetching shows from API sending title to shows array in order to manipulate later
+
 
 function populateShows() {
     fetch("http://localhost:3000/shows")
     .then(response => response.json())
     .then(data => {
         data.forEach(show => {
-            console.log("showTitels", show.title)
             shows.push(show.title)
 
         })
@@ -30,11 +36,11 @@ function populateShows() {
 
 }
 
+// creating the li's under the ul of "list"
+
 function displayShows() {
     removeAllChildNodes(showsList)
-    console.log("here")
         shows.forEach(show => {
-            console.log("show", show)
             let li = document.createElement("li");
             li.innerText = show;
             li.className = "shows";
@@ -44,9 +50,9 @@ function displayShows() {
         })
 }
 
-// be able to search through the shows
 
-// clicking adds to queue
+
+// clicking on title adds to queue
 
 function addToQueue(showTitle) {
     return function() {
@@ -56,33 +62,30 @@ function addToQueue(showTitle) {
     }
 }
 
-function removeAllChildNodes(parent) {
-    while (parent.firstChild) {
-        parent.removeChild(parent.firstChild);
-    }
-}
 
-// remove queues shows
+
+// clicking on title removes show from queue
 
 function removeFromQueue(title) {
     return function() {
-
-    const removeId = queue.indexOf(title)
-    queue.splice(removeId, 1)
-    displayQueue();
+        const removeId = queue.indexOf(title)
+        queue.splice(removeId, 1)
+        displayQueue();
     }
 }
 
+// creating li's under the ul of "queue"
+
 function displayQueue() {
     removeAllChildNodes(queueList)
-        queue.forEach(title => {
-            let li = document.createElement("li");
-            li.innerText = title;
-            li.className = "queued";
-            li.id = `${title}`;
-            li.addEventListener("click", removeFromQueue(title))
-            queueList.appendChild(li)
-        })
+    queue.forEach(title => {
+        let li = document.createElement("li");
+        li.innerText = title;
+        li.className = "queued";
+        li.id = `${title}`;
+        li.addEventListener("click", removeFromQueue(title))
+        queueList.appendChild(li)
+    })
 }
 
 // search through movie list
@@ -93,7 +96,6 @@ function search() {
     if(searchText == "" || searchText == null) {
         populateShows()
     }
-    console.log("search text", searchText)
     for(let i = 0; i < shows.length; i++) {
         let show = shows[i];
         if (!show.toLowerCase().includes(searchText.toLowerCase())) {
@@ -101,7 +103,6 @@ function search() {
             shows.splice(removeId, 1)
             i--;
         }
-    
     }
     displayShows();
 }
