@@ -1,78 +1,11 @@
-// code here
-
-// document.addEventListener("DOMContentLoaded", () => {
-//     listShows();
-//     addShowsToList(displayedShows);
-// })
-
-// list the shows under "shows"
-
-// const showsList = document.getElementById("list");
-// const queueList = document.getElementById("queued");
-// const displayedShows = [];
-// console.log(displayedShows)
-
-// function listShows() {
-//     fetch("http://localhost:3000/shows")
-//     .then(response => response.json())
-//     .then(shows => {
-//         shows.forEach(show => displayedShows.push(show.title))
-//     })
-//}
-
-// function addShowsToList(displayedShows) {
-//     console.log("test", displayedShows)
-//     displayedShows.forEach(displayedShow => {
-//         let li = document.createElement("li")
-//         li.innerText = displayedShow;
-//         queueList.appendChild(li)
-//     })
-    //  displayedShows.forEach(displayedShow => console.log("li log", displayedShow)
-        // let li = document.createElement("li")
-        // li.innerText = displayedShow;
-        // queueList.appendChild(li)
-    //  )
-//}
-    
-
-// function listShows() {
-//     fetch("http://localhost:3000/shows")
-//     .then(response => response.json())
-//     .then(shows => {
-//         shows.forEach(show => {
-//             let li = document.createElement("li");
-//             li.innerText = show.title;
-//             li.id= `${show.title}`
-//             li.className = "shows";
-//             showsList.appendChild(li)
-//         })})
-
-// }
-
-// click and add shows to queue
-
-// const theWalkingDead = document.getElementById("The Walking Dead");
-// const loki = document.getElementById("Loki");
-// const riverdale = document.getElementById("Riverdale");
-// const gameOfThrones = document.getElementById("Game of Thrones");
-// const legacies = document.getElementById("Legacies")
-
-// theWalkingDead.addEventListener("click", addToQueue)
-
-// function addToQueue() {
-//     console.log("clicked")
-// }
-
-// be able to search through the shows
-
-
 
 // code here
 const shows = [];
 const queue = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-    listShows();
+    populateShows();
+    
 
 })
 
@@ -83,21 +16,32 @@ document.addEventListener("DOMContentLoaded", () => {
 const showsList = document.getElementById("list")
 const queueList = document.getElementById("queued")
 
-function listShows() {
+function populateShows() {
     fetch("http://localhost:3000/shows")
     .then(response => response.json())
-    .then(shows => {
-        shows.forEach(show => {
-            let li = document.createElement("li");
-            li.innerText = show.title;
-            li.className = "shows";
-            li.id = `${show.title}`;
-            li.addEventListener("click", addToQueue(show.title))
-            showsList.appendChild(li)
+    .then(data => {
+        data.forEach(show => {
+            console.log("showTitels", show.title)
             shows.push(show.title)
 
-        })})
+        })
+        displayShows();
+    })
 
+}
+
+function displayShows() {
+    removeAllChildNodes(showsList)
+    console.log("here")
+        shows.forEach(show => {
+            console.log("show", show)
+            let li = document.createElement("li");
+            li.innerText = show;
+            li.className = "shows";
+            li.id = `${show}`;
+            li.addEventListener("click", addToQueue(show))
+            showsList.appendChild(li)
+        })
 }
 
 // be able to search through the shows
@@ -139,5 +83,26 @@ function displayQueue() {
             li.addEventListener("click", removeFromQueue(title))
             queueList.appendChild(li)
         })
+}
+
+// search through movie list
+
+
+function search() {
+    let searchText = document.getElementById("search").value
+    if(searchText == "" || searchText == null) {
+        populateShows()
+    }
+    console.log("search text", searchText)
+    for(let i = 0; i < shows.length; i++) {
+        let show = shows[i];
+        if (!show.toLowerCase().includes(searchText.toLowerCase())) {
+            const removeId = shows.indexOf(show)
+            shows.splice(removeId, 1)
+            i--;
+        }
+    
+    }
+    displayShows();
 }
 
